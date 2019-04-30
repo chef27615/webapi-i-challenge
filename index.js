@@ -9,6 +9,7 @@ server.listen(4001, () => {
     console.log('*******server running*******');
 })
 
+// **********GET
 server.get('/api/users', (req, res) => {
     db
     .find()
@@ -20,6 +21,8 @@ server.get('/api/users', (req, res) => {
     })
 })
 
+
+//*********Get by ID 
 server.get('/api/users/:id', (req, res) => {
     const id = req.params.id;
     db.findById(id)
@@ -41,6 +44,8 @@ server.get('/api/users/:id', (req, res) => {
     })
 })
 
+
+// ************** post new user
 server.post('/api/users', (req, res) => {
     const user = req.body;
 
@@ -65,21 +70,41 @@ server.post('/api/users', (req, res) => {
     }
 })
 
+
+// *********************delete user
+
 server.delete('/api/users/:id', (req, res) => {
     const { id } = req.params;
-    db.
-    remove(id)
-    .then( deleted => {
-        if(res===0){
-            res.status(404).json({ message: "The user with the specified ID does not exist." })
-        }else{
+
+    if(id){
+        db
+        .remove(id)
+        .then(res => {
             res.status(204).end()
-        }
-    })
-    .catch(err => {
-        res.status(500).json({ error: "The user could not be removed" })
-    })
+        })
+        .catch(err => {
+            res.status(500).json({ error: "The user could not be removed" })
+        })
+    }else{res.status(404).json({ message: "The user with the specified ID does not exist." })}
+
+
+    // db.
+    // remove(id)
+    // .then( res => {
+    //     if(res){
+    //         res.status(204).end()
+    //     }else{
+    //         res.status(404).json({ message: "The user with the specified ID does not exist." })
+    //     }
+    // })
+    // .catch(err => {
+    //     res.status(500).json({ error: "The user could not be removed" })
+    // })
 })
+
+
+
+// ************* put request
 
 server.put('/api/user/:id', (req, res) => {
     const { id } = req.params;
