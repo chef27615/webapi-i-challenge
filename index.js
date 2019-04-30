@@ -76,52 +76,31 @@ server.post('/api/users', (req, res) => {
 server.delete('/api/users/:id', (req, res) => {
     const { id } = req.params;
 
-    if(id){
         db
         .remove(id)
-        .then(res => {
-            res.status(204).end()
+        .then(user => {
+            user ? res.status(204).end(): res.status(404).json({ message: "The user with the specified ID does not exist." })
         })
         .catch(err => {
             res.status(500).json({ error: "The user could not be removed" })
         })
-    }else{res.status(404).json({ message: "The user with the specified ID does not exist." })}
-
-
-    // db.
-    // remove(id)
-    // .then( res => {
-    //     if(res){
-    //         res.status(204).end()
-    //     }else{
-    //         res.status(404).json({ message: "The user with the specified ID does not exist." })
-    //     }
-    // })
-    // .catch(err => {
-    //     res.status(500).json({ error: "The user could not be removed" })
-    // })
 })
 
 
 
 // ************* put request
 
-server.put('/api/user/:id', (req, res) => {
-    const { id } = req.params;
-    const {name, bio} = req.body;
-
-    db
-    .update(id, user)
-    .then(updated => {
-        if(!id.includes(id)){
-            res.status(404).json({ message: "The user with the specified ID does not exist." })
-        }else if(!name || !bio){
-            res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
-        }else{
-            res.status(200).json(updated)
-        }
-    })
-    .catch(err => {
-        res.status(500).json({ error: "The user information could not be modified." })
-    })
+server.put('/api/users/:id', (req, res) => {
+    const { id } = req.params
+    const { name, bio } = req.body
+    if(name && bio){
+        db
+        .update(id, req.body)
+        .then(user => {
+            user ? res.status(200).json({ name, bio }) : res.status(404).json({ message: "The user with the specified ID does not exist." })
+        })
+        .catch(err => {
+            res.status(500).json({ error: "The user information could not be modified." })
+        })} else { res.status(400).json({ errorMessage: "Please provide name and bio for the user." })}     
 })
+
